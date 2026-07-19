@@ -1,0 +1,53 @@
+use online_store_db;
+SELECT COUNT(*) AS total_users FROM users;
+
+SELECT city, COUNT(*) AS total_users FROM users
+GROUP BY city ORDER BY total_users DESC;
+
+SELECT city, ROUND(AVG(salary), 0) AS avg_salary FROM users
+GROUP BY city ORDER BY avg_salary DESC;
+
+SELECT gender,COUNT(*) AS total_users,ROUND(AVG(salary), 0) AS avg_salary,
+MAX(salary) AS max_salary,MIN(salary) AS min_salary FROM users GROUP BY gender;
+
+SELECT get_salary_grade(salary) AS grade,COUNT(*) AS total_users FROM users
+GROUP BY grade ORDER BY total_users DESC;
+
+SELECT CASE
+WHEN get_age(dob) < 25 THEN 'Under 25'
+WHEN get_age(dob) BETWEEN 25 AND 30 THEN '25-30'
+WHEN get_age(dob) BETWEEN 31 AND 35 THEN '31-35'
+ELSE 'Above 35'
+END AS age_group,
+COUNT(*) AS total_users,
+ROUND(AVG(salary), 0) AS avg_salary FROM users GROUP BY age_group;
+
+SELECT name, city, salary,get_salary_grade(salary) AS grade FROM users
+ORDER BY salary DESC LIMIT 5;
+
+SELECT
+MIN(salary) AS min_salary,
+MAX(salary) AS max_salary,
+ROUND(AVG(salary), 0) AS avg_salary,
+SUM(salary) AS total_salary
+FROM users;
+
+SELECT city, gender,
+COUNT(*) AS total_users FROM users GROUP BY city, gender ORDER BY city, total_users DESC;
+
+SELECT city, COUNT(*) AS total_users,
+ROUND(AVG(salary), 0) AS avg_salary FROM users
+GROUP BY city ORDER BY total_users DESC LIMIT 3;
+
+SELECT name, salary FROM users
+WHERE salary = (SELECT MAX(salary) FROM users);
+
+WITH high_salary AS (SELECT * FROM users WHERE salary > 50000)
+SELECT * FROM high_salary;
+
+SELECT name, salary,
+RANK() OVER (ORDER BY salary DESC) AS salary_rank FROM users;
+
+START TRANSACTION;
+UPDATE users SET salary = 60000 WHERE id = 1;
+COMMIT;
